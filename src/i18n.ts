@@ -67,7 +67,9 @@ export type LocaleKey =
 	| 'styleWidowsTitle'
 	| 'styleWidowsDesc'
 	| 'styleOrphansTitle'
-	| 'styleOrphansDesc';
+	| 'styleOrphansDesc'
+	| 'styleLineHeightTitle'
+	| 'styleLineHeightDesc';
 
 const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 	ru: {
@@ -145,6 +147,8 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleWidowsDesc: 'Минимальное число строк абзаца, переносимых на следующую страницу.',
 		styleOrphansTitle: 'Висячие строки в начале абзаца',
 		styleOrphansDesc: 'Минимальное число строк абзаца, остающихся на предыдущей странице.',
+		styleLineHeightTitle: 'Высота строки',
+		styleLineHeightDesc: 'Расстояние между строками. Может быть число или normal.',
 	},
 	en: {
 		baseSettingsTitle: 'Base Settings',
@@ -223,6 +227,8 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleOrphansTitle: 'Orphans',
 		styleOrphansDesc:
 			'Minimum number of lines left on the previous page from the start of a paragraph.',
+		styleLineHeightTitle: 'Line Height',
+		styleLineHeightDesc: 'Space between lines. Accepts numbers or normal as value.',
 	},
 };
 

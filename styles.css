@@ -4,6 +4,7 @@
 	text-align: var(--pt-text-alignment, left);
 	letter-spacing: var(--pt-text-letter-spacing, normal);
 	word-spacing: var(--pt-text-word-spacing, normal);
+	line-height: var(--pt-line-height, normal);
 	word-break: var(--pt-word-break, normal);
 	overflow-wrap: var(--pt-overflow-wrap, normal);
 	text-wrap: var(--pt-text-wrap, wrap);

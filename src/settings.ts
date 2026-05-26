@@ -21,6 +21,7 @@ export interface PreviewTypographySettings {
 	hangingPunctuation: 'none' | 'first' | 'last' | 'first last' | 'allow-end' | 'force-end';
 	widows: string;
 	orphans: string;
+	lineHeight: string;
 }
 
 export const DEFAULT_SETTINGS: PreviewTypographySettings = {
@@ -42,6 +43,7 @@ export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	hangingPunctuation: 'first last',
 	widows: '3',
 	orphans: '3',
+	lineHeight: '1.45',
 };
 
 export class PreviewTypographySettingTab extends PluginSettingTab {
@@ -145,6 +147,25 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 						this.plugin.updateStyleVariables();
 					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleLineHeightTitle'))
+			.setDesc(t('styleLineHeightDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.lineHeight).onChange(async (val) => {
+					this.plugin.settings.lineHeight = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) =>
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.lineHeight = DEFAULT_SETTINGS.lineHeight;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
 			);
 
 		new Setting(containerEl)

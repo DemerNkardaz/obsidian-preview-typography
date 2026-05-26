@@ -51,6 +51,7 @@ export default class PreviewTypography extends Plugin {
 		set('--pt-hanging-punctuation', s.hangingPunctuation);
 		set('--pt-widows', s.widows);
 		set('--pt-orphans', s.orphans);
+		set('--pt-line-height', s.lineHeight);
 	}
 
 	removeStyleVariables() {
@@ -68,6 +69,7 @@ export default class PreviewTypography extends Plugin {
 		root.removeProperty('--pt-hanging-punctuation');
 		root.removeProperty('--pt-widows');
 		root.removeProperty('--pt-orphans');
+		root.removeProperty('--pt-line-height');
 	}
 
 	async loadSettings() {
