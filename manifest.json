@@ -1,0 +1,11 @@
+{
+	"id": "preview-typography",
+	"name": "Preview Typography",
+	"description": "Shows text in non-editing mode with typographical replaces.",
+	"version": "1.0.0",
+	"minAppVersion": "1.4.10",
+	"isDesktopOnly": false,
+	"author": "Yalla Nkardaz",
+	"authorUrl": "https://github.com/DemerNkardaz",
+	"fundingUrl": "https://www.ko-fi.com/yalla"
+}
