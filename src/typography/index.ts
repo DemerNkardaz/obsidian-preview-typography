@@ -39,7 +39,11 @@ export function applyTypographyToString(text: string, strategy: ScriptType | 'dy
 		if (!rules) return text;
 		let result = text;
 		for (const [regex, replaceValue] of rules) {
-			result = result.replace(regex, replaceValue);
+			if (typeof replaceValue === 'string') {
+				result = result.replace(regex, replaceValue);
+			} else {
+				result = result.replace(regex, replaceValue);
+			}
 		}
 		return result;
 	}
@@ -49,7 +53,11 @@ export function applyTypographyToString(text: string, strategy: ScriptType | 'dy
 		if (detected && typographyRules[detected]) {
 			let result = text;
 			for (const [regex, replaceValue] of typographyRules[detected]) {
-				result = result.replace(regex, replaceValue);
+				if (typeof replaceValue === 'string') {
+					result = result.replace(regex, replaceValue);
+				} else {
+					result = result.replace(regex, replaceValue);
+				}
 			}
 			return result;
 		}
@@ -58,7 +66,8 @@ export function applyTypographyToString(text: string, strategy: ScriptType | 'dy
 	return text;
 }
 
-function walkTextNodes(element: HTMLElement, strategy: ScriptType | 'dynamic') {
+function processElementWithSmartContext(element: HTMLElement, strategy: ScriptType | 'dynamic') {
+	const nodes: Node[] = [];
 	const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
 		acceptNode: (node) => {
 			const parent = node.parentElement;
@@ -79,14 +88,41 @@ function walkTextNodes(element: HTMLElement, strategy: ScriptType | 'dynamic') {
 
 	let currentNode = walker.nextNode();
 	while (currentNode) {
-		const original = currentNode.nodeValue;
-		if (original) {
-			const transformed = applyTypographyToString(original, strategy);
-			if (original !== transformed) {
-				currentNode.nodeValue = transformed;
+		nodes.push(currentNode);
+		currentNode = walker.nextNode();
+	}
+
+	if (nodes.length === 0) return;
+
+	if (nodes.length === 1) {
+		const node = nodes[0];
+		if (node) {
+			const original = node.nodeValue;
+			if (original) {
+				const transformed = applyTypographyToString(original, strategy);
+				if (original !== transformed) {
+					node.nodeValue = transformed;
+				}
 			}
 		}
-		currentNode = walker.nextNode();
+		return;
+	}
+
+	const NODE_MARKER = '\uE000';
+
+	const combinedText = nodes.map((n) => (n ? n.nodeValue || '' : '')).join(NODE_MARKER);
+
+	const transformedCombinedText = applyTypographyToString(combinedText, strategy);
+
+	const segments = transformedCombinedText.split(NODE_MARKER);
+
+	for (let i = 0; i < nodes.length; i++) {
+		const node = nodes[i];
+		const segment = segments[i];
+
+		if (node && segment !== undefined && node.nodeValue !== segment) {
+			node.nodeValue = segment;
+		}
 	}
 }
 
@@ -117,6 +153,6 @@ export function processElementTypography(
 	}
 
 	if (strategy) {
-		walkTextNodes(element, strategy);
+		processElementWithSmartContext(element, strategy);
 	}
 }

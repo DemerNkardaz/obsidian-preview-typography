@@ -25,10 +25,7 @@ export default class PreviewTypography extends Plugin {
 		this.addSettingTab(new PreviewTypographySettingTab(this.app, this));
 	}
 
-	onunload() {
-		// Пост-процессоры, зарегистрированные через this.registerMarkdownPostProcessor,
-		// Obsidian выгружает из памяти автоматически при отключении плагина.
-	}
+	onunload() {}
 
 	async loadSettings() {
 		this.settings = Object.assign(
