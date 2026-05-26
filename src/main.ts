@@ -13,6 +13,7 @@ export default class PreviewTypography extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		this.updateStyleVariables();
 
 		this.registerMarkdownPostProcessor((element, context) => {
 			const file = this.app.vault.getAbstractFileByPath(context.sourcePath);
@@ -27,12 +28,18 @@ export default class PreviewTypography extends Plugin {
 
 	onunload() {}
 
+	updateStyleVariables() {
+		document.documentElement.style.setProperty('--pt-text-alignment', this.settings.textAlignment);
+		document.documentElement.style.setProperty(
+			'--pt-text-letter-spacing',
+			this.settings.letterSpacing
+		);
+	}
+
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
-
 			DEFAULT_SETTINGS,
-
 			(await this.loadData()) as Partial<PreviewTypographySettings>
 		);
 	}

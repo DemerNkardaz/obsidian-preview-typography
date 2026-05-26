@@ -1,6 +1,9 @@
 import { moment } from 'obsidian';
 
 export type LocaleKey =
+	| 'baseSettingsTitle'
+	| 'styleSettingsTitle'
+	| 'restoreDefault'
 	| 'globalScriptTitle'
 	| 'globalScriptDesc'
 	| 'dynamicDetectionTitle'
@@ -10,10 +13,21 @@ export type LocaleKey =
 	| 'settingsNote'
 	| 'customRulesCyrillicTitle'
 	| 'customRulesLatinTitle'
-	| 'customRulesDesc';
+	| 'customRulesDesc'
+	| 'styleTextAlignmentTitle'
+	| 'styleTextAlignmentDesc'
+	| 'styleTextAlignmentLeft'
+	| 'styleTextAlignmentRight'
+	| 'styleTextAlignmentJustify'
+	| 'styleTextAlignmentCenter'
+	| 'styleLetterSpacingTitle'
+	| 'styleLetterSpacingDesc';
 
 const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 	ru: {
+		baseSettingsTitle: 'Основные настройки',
+		styleSettingsTitle: 'Настройки стилей',
+		restoreDefault: 'По умолчанию',
 		globalScriptTitle: 'Глобальное письмо',
 		globalScriptDesc:
 			'Выберите используемую письменность по умолчанию (латиница, кириллица) или оставьте пустым для отключения правила.',
@@ -26,8 +40,21 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		customRulesCyrillicTitle: 'Пользовательские правила для кириллицы',
 		customRulesLatinTitle: 'Пользовательские правила для латиницы',
 		customRulesDesc: 'Формат: «регулярное выражение|замена», с новой строки.',
+		styleTextAlignmentTitle: 'Выравнивание текста',
+		styleTextAlignmentDesc:
+			'Выберите выравнивание текста: выключка влево, вправо, по ширине, по центру.',
+		styleTextAlignmentLeft: 'Выключка влево',
+		styleTextAlignmentRight: 'Выключка вправо',
+		styleTextAlignmentJustify: 'Выключка по ширине',
+		styleTextAlignmentCenter: 'Выключка по центру',
+		styleLetterSpacingTitle: 'Расстояние между буквами',
+		styleLetterSpacingDesc:
+			'Выберите расстояние между буквами (normal или пользовательское значение в em, rem, px, pt).',
 	},
 	en: {
+		baseSettingsTitle: 'Base Settings',
+		styleSettingsTitle: 'Style Settings',
+		restoreDefault: 'Default Value',
 		globalScriptTitle: 'Global Script',
 		globalScriptDesc:
 			'Select the default writing system (latin, cyrillic) or leave empty to disable the rule.',
@@ -40,6 +67,14 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		customRulesCyrillicTitle: 'Custom rules for Cyrillic',
 		customRulesLatinTitle: 'Custom rules for Latin',
 		customRulesDesc: 'Format: “regular expression|replacement”, one per line.',
+		styleTextAlignmentTitle: 'Text Alignment',
+		styleTextAlignmentDesc: 'Select text alignment: left, right, width, center.',
+		styleTextAlignmentLeft: 'Left',
+		styleTextAlignmentRight: 'Right',
+		styleTextAlignmentJustify: 'Width',
+		styleTextAlignmentCenter: 'Center',
+		styleLetterSpacingTitle: 'Letter Spacing',
+		styleLetterSpacingDesc: 'Select letter spacing (normal or custom value in em, rem, px, pt).',
 	},
 };
 

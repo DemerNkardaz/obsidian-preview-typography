@@ -7,6 +7,8 @@ export interface PreviewTypographySettings {
 	dynamicDetection: boolean;
 	customRulesRu: string;
 	customRulesEn: string;
+	textAlignment: 'left' | 'right' | 'justify' | 'center';
+	letterSpacing: string;
 }
 
 export const DEFAULT_SETTINGS: PreviewTypographySettings = {
@@ -14,6 +16,8 @@ export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	dynamicDetection: true,
 	customRulesRu: '',
 	customRulesEn: '',
+	textAlignment: 'left',
+	letterSpacing: '-0.007em',
 };
 
 export class PreviewTypographySettingTab extends PluginSettingTab {
@@ -37,9 +41,9 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('p', {
-			text: t('settingsNote'),
-		});
+		new Setting(containerEl).setName(t('baseSettingsTitle')).setHeading();
+
+		containerEl.createEl('p', { text: t('settingsNote') });
 
 		containerEl.createEl('hr');
 
@@ -89,6 +93,49 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					this.plugin.settings.customRulesEn = val;
 					await this.plugin.saveSettings();
 					this.refreshActiveView();
+				})
+			);
+
+		new Setting(containerEl).setName(t('styleSettingsTitle')).setHeading();
+
+		new Setting(containerEl)
+			.setName(t('styleTextAlignmentTitle'))
+			.setDesc(t('styleTextAlignmentDesc'))
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption('left', t('styleTextAlignmentLeft'))
+					.addOption('right', t('styleTextAlignmentRight'))
+					.addOption('justify', t('styleTextAlignmentJustify'))
+					.addOption('center', t('styleTextAlignmentCenter'))
+					.setValue(this.plugin.settings.textAlignment)
+					.onChange(async (value: string) => {
+						this.plugin.settings.textAlignment =
+							value as PreviewTypographySettings['textAlignment'];
+
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleLetterSpacingTitle'))
+			.setDesc(t('styleLetterSpacingDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.letterSpacing).onChange(async (val) => {
+					this.plugin.settings.letterSpacing = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((button) =>
+				button.setButtonText(t('restoreDefault')).onClick(async () => {
+					const defaultValue = DEFAULT_SETTINGS.letterSpacing;
+
+					this.plugin.settings.letterSpacing = defaultValue;
+					await this.plugin.saveSettings();
+
+					this.display();
+					this.plugin.updateStyleVariables();
 				})
 			);
 	}
