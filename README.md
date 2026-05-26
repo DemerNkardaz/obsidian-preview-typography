@@ -57,7 +57,6 @@ script-specific → custom common → built-in common.
 | :---------------------------- | :----------------------- | :-------------------------------- |
 | Space before % or ‰           | None                     | Remove space before percent signs |
 | "text"                        | «text»                   | Standard typography quotes        |
-| ""text""                      | «„text"»                 | Hierarchical quotes               |
 | "text" "text" "text"          | «text „text" text»       | Nested quotes                     |
 | Spaces inside quotes/brackets | None                     | Remove "hanging" spaces           |
 | .»                            | ».                       | Move period outside quotes        |
@@ -76,7 +75,6 @@ script-specific → custom common → built-in common.
 | Expression            | Replacement        | Description                 |
 | :-------------------- | :----------------- | :-------------------------- |
 | "text"                | "text"             | Standard smart quotes       |
-| ""text""              | "'text'"           | Hierarchical quotes         |
 | "text" "text" "text"  | "text 'text' text" | Complex nested quotes       |
 | Currency symbol+space | Currency+number    | Remove space after currency |
 | fi / fl               | ﬁ / ﬂ              | Typographic ligatures       |
@@ -140,7 +138,6 @@ script-specific → custom common → built-in common.
 | :------------------------------------- | :------------------------------------------ | :------------------------------------------ |
 | Пробел перед % или ‰                   | Удаление пробела                            | Правильная верстка знаков процентов         |
 | "текст"                                | «текст»                                     | Замена машинописных кавычек на корректные   |
-| ""текст""                              | «„текст"»                                   | Иерархические кавычки                       |
 | "текст" "текст" "текст"                | «текст „текст" текст»                       | Сложная вложенность кавычек                 |
 | Пробелы внутри кавычек и скобок        | Удаление пробелов                           | Устранение «висячих» пробелов внутри знаков |
 | .»                                     | ».                                          | Вынос точки за кавычку                      |
@@ -159,7 +156,6 @@ script-specific → custom common → built-in common.
 | Выражение                | Замена             | Описание действия                         |
 | :----------------------- | :----------------- | :---------------------------------------- |
 | "text"                   | "text"             | Замена машинописных кавычек на корректные |
-| ""text""                 | "'text'"           | Иерархические кавычки                     |
 | "text" "text" "text"     | "text 'text' text" | Сложная вложенность кавычек               |
 | Символ валюты + пробел   | Валюта + число     | Удаление пробела после символа валюты     |
 | Вставка лигатур (fi, fl) | ﬁ, ﬂ               | Корректное оформление лигатур             |

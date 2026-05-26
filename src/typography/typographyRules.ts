@@ -18,7 +18,59 @@ const punctuation = {
 
 const wallet = '\\$\u20AC\u00A3\u00A5\u20BD\u20B4\u20A3\u20A4';
 
-type Rule = [RegExp, string];
+export type Rule = [RegExp, string] | [(text: string) => string, ''];
+
+function smartQuotes(
+	text: string,
+	quotes: string[][] = [
+		['«', '»'],
+		['„', '“'],
+	]
+): string {
+	let result = '';
+	let level = 0;
+
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i];
+
+		if (char !== '"') {
+			result += char;
+			continue;
+		}
+
+		const prev = text[i - 1] ?? '';
+		const next = text[i + 1] ?? '';
+
+		const afterSpace = prev === '' || /\s/.test(prev);
+		const beforeSpace = next === '' || /\s/.test(next);
+
+		let isOpen: boolean;
+
+		if (level === 0) {
+			isOpen = true;
+		} else if (afterSpace && !beforeSpace) {
+			isOpen = true;
+		} else if (!afterSpace && beforeSpace) {
+			isOpen = false;
+		} else if (!afterSpace && !beforeSpace) {
+			isOpen = false;
+		} else {
+			isOpen = level === 0;
+		}
+
+		if (isOpen) {
+			const q = quotes[Math.min(level, quotes.length - 1)] ?? ['"', '"'];
+			result += q[0];
+			level++;
+		} else {
+			level = Math.max(0, level - 1);
+			const q = quotes[Math.min(level, quotes.length - 1)] ?? ['"', '"'];
+			result += q[1];
+		}
+	}
+
+	return result;
+}
 
 export const typographyRules: Record<string, Rule[]> = {
 	common: [
@@ -47,9 +99,7 @@ export const typographyRules: Record<string, Rule[]> = {
 	ru: [
 		// 0::Разное
 		[/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'],
-		[/"([^"]*)"([^"]*)"([^"]*)"/g, `«$1„$2"$3»`],
-		[/""(.*)""]/g, `«„$1"»`],
-		[/"([^"]+)"/g, `«$1»`],
+		[(text: string) => smartQuotes(text), ''],
 		[
 			new RegExp(
 				`(?<=[${punctuation.leftSided}«„\\(\\[])\\s+|(?<!\\s)\\s(?=[${punctuation.rightSided}»"'\\)\\]])`,
@@ -109,9 +159,14 @@ export const typographyRules: Record<string, Rule[]> = {
 		],
 	],
 	en: [
-		[/"([^"]*)"([^"]*)"([^"]*)"/g, `\u201C$1\u2018$2\u2019$3\u201D`],
-		[/""(.*)""]/g, `\u201C\u2018$1\u2019\u201D`],
-		[/"([^"]+)"/g, `\u201C$1\u201D`],
+		[
+			(text: string) =>
+				smartQuotes(text, [
+					['“', '”'],
+					['‘', '’'],
+				]),
+			'',
+		],
 		[new RegExp(`([${wallet}])\\s?(\\d+)`, 'g'), `$1$2`],
 
 		[/fi/g, '\uFB01'],

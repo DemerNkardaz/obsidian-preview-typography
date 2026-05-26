@@ -76,8 +76,14 @@ export function applyTypographyToString(
 	];
 
 	let result = text;
-	for (const [regex, replaceValue] of allRules) {
-		result = result.replace(regex, replaceValue);
+	for (const rule of allRules) {
+		const [first, second] = rule;
+
+		if (typeof first === 'function') {
+			result = first(result);
+		} else {
+			result = result.replace(first, second);
+		}
 	}
 	return result;
 }
