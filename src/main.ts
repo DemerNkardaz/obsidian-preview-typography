@@ -1,10 +1,12 @@
 import { Plugin, TFile } from 'obsidian';
+
 import {
 	DEFAULT_SETTINGS,
 	PreviewTypographySettings,
 	PreviewTypographySettingTab,
 } from './settings';
-import { processElementTypography, createLivePreviewPlugin } from './typography';
+
+import { processElementTypography } from './typography';
 
 export default class PreviewTypography extends Plugin {
 	settings!: PreviewTypographySettings;
@@ -12,11 +14,6 @@ export default class PreviewTypography extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// 1. Регистрируем расширение для Live Preview (режим редактирования)
-		// Передаем фабрику плагина CodeMirror, которую мы импортировали из папки typography
-		this.registerEditorExtension([createLivePreviewPlugin(this.app, this.settings)]);
-
-		// 2. Регистрируем пост-процессор для Reading View (режим чтения)
 		this.registerMarkdownPostProcessor((element, context) => {
 			const file = this.app.vault.getAbstractFileByPath(context.sourcePath);
 
@@ -29,13 +26,16 @@ export default class PreviewTypography extends Plugin {
 	}
 
 	onunload() {
-		// Расширения редактора и пост-процессоры выгружаются Obsidian автоматически
+		// Пост-процессоры, зарегистрированные через this.registerMarkdownPostProcessor,
+		// Obsidian выгружает из памяти автоматически при отключении плагина.
 	}
 
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
+
 			DEFAULT_SETTINGS,
+
 			(await this.loadData()) as Partial<PreviewTypographySettings>
 		);
 	}
