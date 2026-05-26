@@ -18,8 +18,8 @@ export function normalizeScript(value: unknown): ScriptType {
 }
 
 export function detectScriptDynamic(text: string): ScriptType {
-	const cyrillicRegex = /[\u0400-\u04FF]/;
-	const latinRegex = /[a-zA-Z]/;
+	const cyrillicRegex = /\p{Script=Cyrillic}/u;
+	const latinRegex = /\p{Script=Latin}/u;
 
 	for (let i = 0; i < text.length; i++) {
 		const char = text.charAt(i);

@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, Setting, MarkdownView } from 'obsidian';
 import PreviewTypography from './main';
 import { t } from './i18n';
 
@@ -9,7 +9,7 @@ export interface PreviewTypographySettings {
 
 export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	globalScript: '',
-	dynamicDetection: false,
+	dynamicDetection: true,
 };
 
 export class PreviewTypographySettingTab extends PluginSettingTab {
@@ -20,11 +20,19 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	private refreshActiveView(): void {
+		this.app.workspace.updateOptions();
+
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView && activeView.previewMode) {
+			activeView.previewMode.rerender(true);
+		}
+	}
+
 	display(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		// Настройка №1: Глобальное письмо
 		new Setting(containerEl)
 			.setName(t('globalScriptTitle'))
 			.setDesc(t('globalScriptDesc'))
@@ -37,6 +45,7 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.globalScript = value;
 						await this.plugin.saveSettings();
+						this.refreshActiveView();
 					})
 			);
 
@@ -47,6 +56,7 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 				toggle.setValue(this.plugin.settings.dynamicDetection).onChange(async (value) => {
 					this.plugin.settings.dynamicDetection = value;
 					await this.plugin.saveSettings();
+					this.refreshActiveView();
 				})
 			);
 	}
