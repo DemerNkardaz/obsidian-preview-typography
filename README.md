@@ -1,90 +1,156 @@
-# Obsidian Sample Plugin
+[English](#english) | [Русский](#русский)
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+---
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+<a name="english" id="english"></a>
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+# Preview Typography
 
-## First time developing plugins?
+A plugin that automatically applies typography rules to your notes in preview
+mode.
 
-Quick starting guide for new plugin devs:
+The built-in typography rules are primarily focused on Cyrillic. However, the
+plugin supports custom user-defined rules for both Cyrillic and Latin scripts.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+The plugin does not modify the original note text.
 
-## Releasing new releases
+### Settings
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+![Settings](image/README/settings-en.png)
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+- **Global script:** Sets the default script (Latin/Cyrillic) globally for all
+  notes.<br/>Default: “Disabled”
+- **Dynamic detection:** Automatically detects the script in the text and
+  applies the corresponding rules.This behavior is suppressed by the “Global
+  script” setting or the “script” property of the note.<br/>Default: “Enabled”
+- **Custom rules:** Define your own rules using the “expression|replacement”
+  format (one rule per line). Custom rules take precedence over built-in ones.
 
-## Adding your plugin to the community plugin list
+### Note Properties
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+- **script:** Locally defines the script type for a specific note, overriding
+  global settings.
 
-## How to use
+### Built-in Replacement Rules
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+#### Latin (English)
 
-## Manually installing the plugin
+| Expression                | Replacement        | Description                           |
+| :------------------------ | :----------------- | :------------------------------------ |
+| Multiple spaces           | Single space       | Remove redundant spaces               |
+| Leading/Trailing space    | Empty              | Trim line edges                       |
+| --                        | — (Em dash)        | Replace double hyphen with em dash    |
+| - before number           | − (Minus sign)     | Replace hyphen with math minus        |
+| _n_-_n_ (Range)           | _n_–_n_ (En dash)  | Proper interval formatting            |
+| −*n*–_n_ (Negative range) | −*n*…_n_           | Use ellipsis in negative ranges       |
+| ...                       | … (Ellipsis)       | Replace three dots with single symbol |
+| "text"                    | “text”             | Standard smart quotes                 |
+| ""text""                  | “‘text’”           | Hierarchical quotes                   |
+| "text" "text" "text"      | “text ‘text’ text” | Complex nested quotes                 |
+| ' (Apostrophe)            | ’                  | Proper typographic apostrophe         |
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+#### Cyrillic
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+| Expression                    | Replacement              | Description                           |
+| :---------------------------- | :----------------------- | :------------------------------------ |
+| Multiple spaces               | Single space             | Remove redundant spaces               |
+| Leading/Trailing space        | Empty                    | Trim line edges                       |
+| --                            | — (Em dash)              | Replace double hyphen with em dash    |
+| - before number               | − (Minus sign)           | Replace hyphen with math minus        |
+| _n_-_n_ (Range)               | _n_–_n_ (En dash)        | Proper interval formatting            |
+| −*n*–_n_ (Negative range)     | −*n*…_n_                 | Use ellipsis in negative ranges       |
+| Space before % or ‰           | None                     | Remove space before percent signs     |
+| ...                           | … (Ellipsis)             | Replace three dots with single symbol |
+| "text"                        | «text»                   | Standard typography quotes            |
+| ""text""                      | «„text“»                 | Hierarchical quotes                   |
+| "text" "text" "text"          | «text „text“ text»       | Nested quotes                         |
+| ' (Apostrophe)                | ’                        | Proper typographic apostrophe         |
+| Spaces inside quotes/brackets | None                     | Remove “hanging” spaces               |
+| .»                            | ».                       | Move period outside quotes            |
+| Currency with space           | Amount + NBSP + Currency | Bind currency symbol to number        |
+| Paragraph starting with —     | — + NBSP                 | Bind em dash to first word            |
+| Em dash in text               | NBSP + — + NBSP          | Proper em dash spacing                |
+| Thousands grouping            | NBSP                     | Improve number readability            |
+| Initials (I. I. Ivanov)       | Narrow space             | Compact initials formatting           |
+| Particles (б, бы, же...)      | NBSP + particle          | Bind particles to previous word       |
+| Prepositions                  | Word + NBSP              | Bind prepositions to next word        |
+| Single letters                | Letter + NBSP            | Bind single letters (e.g., “Я”)       |
+| Last word of paragraph        | NBSP                     | Prevent orphan word                   |
 
-## Funding URL
+---
 
-You can include funding URLs where people who use your plugin can financially support it.
+<a name="русский" id="русский"></a>
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+# Типографика предпросмотра
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+Плагин для применения правил типографики в режиме предпросмотра текста заметки.
 
-If you have multiple URLs, you can also do:
+Встроенные правила типографики в основном ориентированны на кириллицу (автор
+проекта плохо разбирается в английской типографике). Однако имеется поддержка
+пользовательских правил — как для кирилли, так и для латиницы.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+Плагин не изменяет исходный текст заметок. Возможно позже будет добавлена
+команда для применения правил для исходного текста.
 
-## API Documentation
+### Настройки
 
-See https://docs.obsidian.md
+![Settings](image/README/settings-ru.png)
+
+- **Глобальное письмо:** настраивает тип письменности (латиница/кириллица) на
+  глобальном уровне для всех заметок.<br/>По умолчанию «выключено».
+- **Динамическое обнаружение:** автоматически определяет тип письменности в
+  тексте и применяет соответствующие правила. Подавляется настройкой «Глобальное
+  письмо» или свойством «письмо» заметки.<br/>По умолчанию «включено».
+- **Пользовательские правила:** можно задавать собственные правила, записывая их
+  в формате «выражение|замена» (каждое правило с новой строки). Такие правила
+  имеют приоритет над встроенными.
+
+### Свойства заметок
+
+- **письмо:** (синоним — script) локально определяет тип письменности для
+  заметки, имеет приоритет над глобальным.
+
+### Встроенные правила замены
+
+#### Кириллица
+
+| Выражение                                                     | Замена                                      | Описание действия                                                       |
+| :------------------------------------------------------------ | :------------------------------------------ | :---------------------------------------------------------------------- |
+| Несколько пробелов подряд                                     | Один пробел                                 | Удаление лишних пробелов                                                |
+| Пробел в начале или конце строки                              | Пустота                                     | Очистка краев строки                                                    |
+| --                                                            | — (Длинное тире)                            | Замена двойного дефиса на тире                                          |
+| - перед числом                                                | − (Знак минус)                              | Замена дефиса на математический минус                                   |
+| Диапазон цифр/римских чисел (с дефисом)<br/>(_n_-_n_)         | _n_–_n_ (Короткое тире)                     | Корректное оформление интервалов                                        |
+| Диапазон с отрицательным числом и дефисом/тире<br/>(−*n*–_n_) | −*n*…_n_                                    | Замена дефисов/тире на многоточие в интервалах с отрицательными числами |
+| Пробел перед % или ‰                                          | Удаление пробела                            | Правильная верстка знаков процентов                                     |
+| ...                                                           | … (Многоточие)                              | Замена трех точек на один символ                                        |
+| "текст"                                                       | «текст»                                     | Замена машинописных кавычек на корректные                               |
+| ""текст""                                                     | «„текст“»                                   | Иерархические кавычки                                                   |
+| "текст" "текст" "текст"                                       | «текст „текст“ текст»                       | Сложная вложенность кавычек                                             |
+| Машинописный апостроф ( ' )                                   | ’                                           | Замена машинописного апострофа на корректный                            |
+| Пробелы внутри кавычек и скобок                               | Удаление пробелов                           | Устранение «висячих» пробелов внутри знаков                             |
+| .»                                                            | ».                                          | Вынос точки за кавычку                                                  |
+| Валюта с пробелом                                             | число + неразрывный пробел + валюта         | Привязка валюты к числу                                                 |
+| Начало абзаца с тире                                          | — + неразрывный пробел                      | Привязка тире к первому слову                                           |
+| Тире с пробелами внутри текста                                | неразрывный пробел + — + неразрывный пробел | Корректная верстка тире                                                 |
+| Группировка тысяч в числах                                    | неразрывный пробел                          | Улучшение читаемости больших чисел                                      |
+| Инициалы с фамилией<br/>(И. И. Иванов)                        | узкий пробел<br/>(И. И. Иванов)             | Компактная верстка инициалов                                            |
+| Частицы (б, бы, же...)                                        | неразрывный пробел + частица                | Привязка частиц к предыдущему слову                                     |
+| Предлоги и сокращения                                         | слово + неразрывный пробел                  | Привязка предлогов к следующему слову                                   |
+| Одиночные буквы                                               | буква + неразрывный пробел                  | Привязка одиночных букв (напр., "Я")                                    |
+| Последнее слово абзаца                                        | неразрывный пробел                          | Защита от переноса последнего слова                                     |
+
+#### Латиница
+
+| Выражение                                                     | Замена                  | Описание действия                                                       |
+| :------------------------------------------------------------ | :---------------------- | :---------------------------------------------------------------------- |
+| Несколько пробелов подряд                                     | Один пробел             | Удаление лишних пробелов                                                |
+| Пробел в начале или конце строки                              | Пустота                 | Очистка краев строки                                                    |
+| --                                                            | — (Длинное тире)        | Замена двойного дефиса на тире                                          |
+| Диапазон цифр/римских чисел (с дефисом)<br/>(_n_-_n_)         | _n_–_n_ (Короткое тире) | Корректное оформление интервалов                                        |
+| Диапазон с отрицательным числом и дефисом/тире<br/>(−*n*–_n_) | −*n*…_n_                | Замена дефисов/тире на многоточие в интервалах с отрицательными числами |
+| "text"                                                        | “text”                  | Замена машинописных кавычек на корректные                               |
+| ""text""                                                      | “‘text’”                | Иерархические кавычки                                                   |
+| "text" "text" "text"                                          | “text ‘text’ text”      | Сложная вложенность кавычек                                             |
+| Машинописный апостроф ( ' )                                   | ’                       | Замена машинописного апострофа на корректный                            |
+| Вставка лигатур (fi, fl)                                      | ﬁ, ﬂ                    | Корректное оформление лигатур                                           |

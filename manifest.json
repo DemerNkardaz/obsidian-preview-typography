@@ -1,7 +1,7 @@
 {
 	"id": "preview-typography",
 	"name": "Preview Typography",
-	"description": "Shows text in non-editing mode with typographical replaces.",
+	"description": "Automatically applies typography rules to text in preview mode according to the selected script. Does not modify the original note text. Custom rules are supported. Includes built-in rules for Latin and Cyrillic scripts.",
 	"version": "1.0.0",
 	"minAppVersion": "1.4.10",
 	"isDesktopOnly": false,

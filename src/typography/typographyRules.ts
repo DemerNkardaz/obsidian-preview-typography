@@ -34,17 +34,18 @@ export const typographyRules: Record<string, Rule[]> = {
 			`$1$2${E.ellipsis}$3`,
 		],
 		[/\.\.\./g, E.ellipsis],
-		[/""(.*)""]/g, `\u00AB\u201E$1\u201C\u00BB`],
-		[/"(.*?)"(.*)"(.*?)"/g, `\u00AB$1\u201E$2\u201C$3\u00BB`],
-		[/"(.*)"/g, `\u00AB$1\u00BB`],
+		[/'/g, '’'],
+		[/""(.*)""]/g, `«„$1“»`],
+		[/"(.*?)"(.*)"(.*?)"/g, `«$1„$2“$3»`],
+		[/"(.*)"/g, `«$1»`],
 		[
 			new RegExp(
-				`(?<=[${punctuation.leftSided}\u00AB\u201E\\(\\[])\\s+|(?<!\\s)\\s(?=[${punctuation.rightSided}\u00BB\u201C'\\)\\]])`,
+				`(?<=[${punctuation.leftSided}«„\\(\\[])\\s+|(?<!\\s)\\s(?=[${punctuation.rightSided}»“'\\)\\]])`,
 				'g'
 			),
 			'',
 		],
-		[/\.»/g, '\u00BB.'],
+		[/\.»/g, '».'],
 		[
 			new RegExp(`(?<!\\d\\s)([${wallet}])\\s(\\d{1,3}(?:\\d{3})*(?:,\\d+)?|\\d+(?:,\\d+)?)`, 'g'),
 			`$2${E.no_break_space}$1`,
@@ -95,5 +96,21 @@ export const typographyRules: Record<string, Rule[]> = {
 			E.no_break_space,
 		],
 	],
-	en: [],
+	en: [
+		[/  +/g, ' '],
+		[/--/g, E.emdash],
+		[/(\d+)-(\d+)/g, `$1${E.endash}$2`],
+
+		[/\.\.\./g, E.ellipsis],
+		[/'/g, '’'],
+		[/""(.*)""]/g, `“‘$1’”`],
+		[/"(.*?)"(.*)"(.*?)"/g, `“$1‘$2’$3”`],
+		[/"(.*)"/g, `“$1”`],
+
+		[/(?<!\d)-(\d+)/g, `${E.minus}$1`],
+		[new RegExp(`([${wallet}])\\s?(\\d+)`, 'g'), `$1$2`],
+
+		[/fi/g, '\uFB01'],
+		[/fl/g, '\uFB02'],
+	],
 };

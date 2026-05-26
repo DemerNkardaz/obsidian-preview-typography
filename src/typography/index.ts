@@ -4,12 +4,33 @@ import { typographyRules } from './typographyRules';
 
 export type ScriptType = 'ru' | 'en' | null;
 
+export function parseCustomRules(raw: string): [RegExp, string][] {
+	if (!raw) return [];
+	return raw
+		.split('\n')
+		.filter((line) => line.includes('|'))
+		.map((line) => {
+			const parts = line.split('|');
+			const regexStr = parts[0];
+			const replacement = parts[1];
+
+			if (typeof regexStr !== 'string' || replacement === undefined) {
+				return null;
+			}
+
+			try {
+				return [new RegExp(regexStr, 'gu'), replacement];
+			} catch {
+				console.error('Invalid regex in custom rules:', regexStr);
+				return null;
+			}
+		})
+		.filter((r): r is [RegExp, string] => r !== null);
+}
+
 export function normalizeScript(value: unknown): ScriptType {
 	if (!value) return null;
-
-	if (typeof value !== 'string' && typeof value !== 'number') {
-		return null;
-	}
+	if (typeof value !== 'string' && typeof value !== 'number') return null;
 
 	const str = String(value).trim().toLowerCase();
 	if (str === 'cyrillic' || str === 'кириллица' || str === 'ru') return 'ru';
@@ -31,42 +52,34 @@ export function detectScriptDynamic(text: string): ScriptType {
 	return null;
 }
 
-export function applyTypographyToString(text: string, strategy: ScriptType | 'dynamic'): string {
+export function applyTypographyToString(
+	text: string,
+	strategy: ScriptType | 'dynamic',
+	settings: PreviewTypographySettings
+): string {
 	if (!strategy || !text) return text;
 
-	if (strategy === 'ru' || strategy === 'en') {
-		const rules = typographyRules[strategy];
-		if (!rules) return text;
-		let result = text;
-		for (const [regex, replaceValue] of rules) {
-			if (typeof replaceValue === 'string') {
-				result = result.replace(regex, replaceValue);
-			} else {
-				result = result.replace(regex, replaceValue);
-			}
-		}
-		return result;
-	}
+	const activeScript = strategy === 'dynamic' ? detectScriptDynamic(text) : strategy;
+	if (!activeScript || (activeScript !== 'ru' && activeScript !== 'en')) return text;
 
-	if (strategy === 'dynamic') {
-		const detected = detectScriptDynamic(text);
-		if (detected && typographyRules[detected]) {
-			let result = text;
-			for (const [regex, replaceValue] of typographyRules[detected]) {
-				if (typeof replaceValue === 'string') {
-					result = result.replace(regex, replaceValue);
-				} else {
-					result = result.replace(regex, replaceValue);
-				}
-			}
-			return result;
-		}
-	}
+	const standardRules = typographyRules[activeScript] || [];
+	const customRaw = activeScript === 'ru' ? settings.customRulesRu : settings.customRulesEn;
+	const customRules = parseCustomRules(customRaw);
 
-	return text;
+	const allRules = [...customRules, ...standardRules];
+
+	let result = text;
+	for (const [regex, replaceValue] of allRules) {
+		result = result.replace(regex, replaceValue);
+	}
+	return result;
 }
 
-function processElementWithSmartContext(element: HTMLElement, strategy: ScriptType | 'dynamic') {
+function processElementWithSmartContext(
+	element: HTMLElement,
+	strategy: ScriptType | 'dynamic',
+	settings: PreviewTypographySettings
+) {
 	const nodes: Node[] = [];
 	const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
 		acceptNode: (node) => {
@@ -94,25 +107,10 @@ function processElementWithSmartContext(element: HTMLElement, strategy: ScriptTy
 
 	if (nodes.length === 0) return;
 
-	if (nodes.length === 1) {
-		const node = nodes[0];
-		if (node) {
-			const original = node.nodeValue;
-			if (original) {
-				const transformed = applyTypographyToString(original, strategy);
-				if (original !== transformed) {
-					node.nodeValue = transformed;
-				}
-			}
-		}
-		return;
-	}
-
 	const NODE_MARKER = '\uE000';
-
 	const combinedText = nodes.map((n) => (n ? n.nodeValue || '' : '')).join(NODE_MARKER);
 
-	const transformedCombinedText = applyTypographyToString(combinedText, strategy);
+	const transformedCombinedText = applyTypographyToString(combinedText, strategy, settings);
 
 	const segments = transformedCombinedText.split(NODE_MARKER);
 
@@ -153,6 +151,6 @@ export function processElementTypography(
 	}
 
 	if (strategy) {
-		processElementWithSmartContext(element, strategy);
+		processElementWithSmartContext(element, strategy, settings);
 	}
 }
