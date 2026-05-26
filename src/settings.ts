@@ -7,8 +7,20 @@ export interface PreviewTypographySettings {
 	dynamicDetection: boolean;
 	customRulesRu: string;
 	customRulesEn: string;
+	srylesEnabled: boolean;
 	textAlignment: 'left' | 'right' | 'justify' | 'center';
 	letterSpacing: string;
+	wordSpacing: string;
+	wordBreak: 'normal' | 'break-all' | 'keep-all';
+	overflowWrap: 'normal' | 'break-word' | 'anywhere';
+	textWrap: 'wrap' | 'nowrap' | 'balance' | 'pretty';
+	textJustify: 'auto' | 'none' | 'inter-word' | 'inter-character';
+	textIndent: string;
+	hyphens: 'none' | 'manual' | 'auto';
+	hyphenateLimitChars: string;
+	hangingPunctuation: 'none' | 'first' | 'last' | 'first last' | 'allow-end' | 'force-end';
+	widows: string;
+	orphans: string;
 }
 
 export const DEFAULT_SETTINGS: PreviewTypographySettings = {
@@ -16,8 +28,20 @@ export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	dynamicDetection: true,
 	customRulesRu: '',
 	customRulesEn: '',
-	textAlignment: 'left',
+	srylesEnabled: true,
+	textAlignment: 'justify',
 	letterSpacing: '-0.007em',
+	wordSpacing: '0.05em',
+	wordBreak: 'normal',
+	overflowWrap: 'break-word',
+	textWrap: 'pretty',
+	textJustify: 'inter-word',
+	textIndent: '5mm',
+	hyphens: 'auto',
+	hyphenateLimitChars: '5 5 3',
+	hangingPunctuation: 'first last',
+	widows: '3',
+	orphans: '3',
 };
 
 export class PreviewTypographySettingTab extends PluginSettingTab {
@@ -42,10 +66,6 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl).setName(t('baseSettingsTitle')).setHeading();
-
-		containerEl.createEl('p', { text: t('settingsNote') });
-
-		containerEl.createEl('hr');
 
 		new Setting(containerEl)
 			.setName(t('globalScriptTitle'))
@@ -99,6 +119,17 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 		new Setting(containerEl).setName(t('styleSettingsTitle')).setHeading();
 
 		new Setting(containerEl)
+			.setName(t('styleEnabledTitle'))
+			.setDesc(t('styleEnabledDesc'))
+			.addToggle((toggle) =>
+				toggle.setValue(this.plugin.settings.srylesEnabled).onChange(async (value) => {
+					this.plugin.settings.srylesEnabled = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables(!value);
+				})
+			);
+
+		new Setting(containerEl)
 			.setName(t('styleTextAlignmentTitle'))
 			.setDesc(t('styleTextAlignmentDesc'))
 			.addDropdown((dropdown) =>
@@ -111,7 +142,6 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					.onChange(async (value: string) => {
 						this.plugin.settings.textAlignment =
 							value as PreviewTypographySettings['textAlignment'];
-
 						await this.plugin.saveSettings();
 						this.plugin.updateStyleVariables();
 					})
@@ -129,11 +159,205 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 			)
 			.addButton((button) =>
 				button.setButtonText(t('restoreDefault')).onClick(async () => {
-					const defaultValue = DEFAULT_SETTINGS.letterSpacing;
-
-					this.plugin.settings.letterSpacing = defaultValue;
+					this.plugin.settings.letterSpacing = DEFAULT_SETTINGS.letterSpacing;
 					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
+			);
 
+		new Setting(containerEl)
+			.setName(t('styleWordSpacingTitle'))
+			.setDesc(t('styleWordSpacingDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.wordSpacing).onChange(async (val) => {
+					this.plugin.settings.wordSpacing = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((button) =>
+				button.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.wordSpacing = DEFAULT_SETTINGS.wordSpacing;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleWordBreakTitle'))
+			.setDesc(t('styleWordBreakDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('normal', t('wordBreakNormal'))
+					.addOption('break-all', t('wordBreakAll'))
+					.addOption('keep-all', t('wordBreakKeep'))
+					.setValue(this.plugin.settings.wordBreak)
+					.onChange(async (val: string) => {
+						this.plugin.settings.wordBreak = val as PreviewTypographySettings['wordBreak'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleOverflowWrapTitle'))
+			.setDesc(t('styleOverflowWrapDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('normal', t('overflowWrapNormal'))
+					.addOption('break-word', t('overflowWrapBreakWord'))
+					.addOption('anywhere', t('overflowWrapAnywhere'))
+					.setValue(this.plugin.settings.overflowWrap)
+					.onChange(async (val: string) => {
+						this.plugin.settings.overflowWrap = val as PreviewTypographySettings['overflowWrap'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextWrapTitle'))
+			.setDesc(t('styleTextWrapDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('wrap', t('textWrapWrap'))
+					.addOption('nowrap', t('textWrapNowrap'))
+					.addOption('balance', t('textWrapBalance'))
+					.addOption('pretty', t('textWrapPretty'))
+					.setValue(this.plugin.settings.textWrap)
+					.onChange(async (val: string) => {
+						this.plugin.settings.textWrap = val as PreviewTypographySettings['textWrap'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextJustifyTitle'))
+			.setDesc(t('styleTextJustifyDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('auto', t('textJustifyAuto'))
+					.addOption('none', t('textJustifyNone'))
+					.addOption('inter-word', t('textJustifyInterWord'))
+					.addOption('inter-character', t('textJustifyInterChar'))
+					.setValue(this.plugin.settings.textJustify)
+					.onChange(async (val: string) => {
+						this.plugin.settings.textJustify = val as PreviewTypographySettings['textJustify'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextIndentTitle'))
+			.setDesc(t('styleTextIndentDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.textIndent).onChange(async (val) => {
+					this.plugin.settings.textIndent = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) =>
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.textIndent = DEFAULT_SETTINGS.textIndent;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleHyphensTitle'))
+			.setDesc(t('styleHyphensDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('none', t('hyphensNone'))
+					.addOption('manual', t('hyphensManual'))
+					.addOption('auto', t('hyphensAuto'))
+					.setValue(this.plugin.settings.hyphens)
+					.onChange(async (val: string) => {
+						this.plugin.settings.hyphens = val as PreviewTypographySettings['hyphens'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleHyphenateLimitCharsTitle'))
+			.setDesc(t('styleHyphenateLimitCharsDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.hyphenateLimitChars).onChange(async (val) => {
+					this.plugin.settings.hyphenateLimitChars = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) =>
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.hyphenateLimitChars = DEFAULT_SETTINGS.hyphenateLimitChars;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleHangingPunctuationTitle'))
+			.setDesc(t('styleHangingPunctuationDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('none', t('hangingNone'))
+					.addOption('first', t('hangingFirst'))
+					.addOption('last', t('hangingLast'))
+					.addOption('first last', t('hangingFirstLast'))
+					.addOption('allow-end', t('hangingAllowEnd'))
+					.addOption('force-end', t('hangingForceEnd'))
+					.setValue(this.plugin.settings.hangingPunctuation)
+					.onChange(async (val: string) => {
+						this.plugin.settings.hangingPunctuation =
+							val as PreviewTypographySettings['hangingPunctuation'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleWidowsTitle'))
+			.setDesc(t('styleWidowsDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.widows).onChange(async (val) => {
+					this.plugin.settings.widows = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) =>
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.widows = DEFAULT_SETTINGS.widows;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleOrphansTitle'))
+			.setDesc(t('styleOrphansDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.orphans).onChange(async (val) => {
+					this.plugin.settings.orphans = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) =>
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.orphans = DEFAULT_SETTINGS.orphans;
+					await this.plugin.saveSettings();
 					this.display();
 					this.plugin.updateStyleVariables();
 				})

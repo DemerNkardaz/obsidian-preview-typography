@@ -8,7 +8,8 @@
       {
         "ignore": [
           "text-wrap",
-          "text-wrap: pretty"
+          "text-wrap: pretty",
+          "text-wrap: var(--pt-text-wrap, pretty)"
         ]
       }
     ]

@@ -28,12 +28,46 @@ export default class PreviewTypography extends Plugin {
 
 	onunload() {}
 
-	updateStyleVariables() {
-		document.documentElement.style.setProperty('--pt-text-alignment', this.settings.textAlignment);
-		document.documentElement.style.setProperty(
-			'--pt-text-letter-spacing',
-			this.settings.letterSpacing
-		);
+	updateStyleVariables(remove?: boolean) {
+		if (remove) {
+			this.removeStyleVariables();
+			return;
+		}
+		const s = this.settings;
+		const root = document.documentElement.style;
+
+		const set = (prop: string, val: string) => root.setProperty(prop, val);
+
+		set('--pt-text-alignment', s.textAlignment);
+		set('--pt-text-letter-spacing', s.letterSpacing);
+		set('--pt-text-word-spacing', s.wordSpacing);
+		set('--pt-word-break', s.wordBreak);
+		set('--pt-overflow-wrap', s.overflowWrap);
+		set('--pt-text-wrap', s.textWrap);
+		set('--pt-text-justify', s.textJustify);
+		set('--pt-text-indent', s.textIndent);
+		set('--pt-hyphens', s.hyphens);
+		set('--pt-hyphenate-limit-chars', s.hyphenateLimitChars);
+		set('--pt-hanging-punctuation', s.hangingPunctuation);
+		set('--pt-widows', s.widows);
+		set('--pt-orphans', s.orphans);
+	}
+
+	removeStyleVariables() {
+		const root = document.documentElement.style;
+		root.removeProperty('--pt-text-alignment');
+		root.removeProperty('--pt-text-letter-spacing');
+		root.removeProperty('--pt-text-word-spacing');
+		root.removeProperty('--pt-word-break');
+		root.removeProperty('--pt-overflow-wrap');
+		root.removeProperty('--pt-text-wrap');
+		root.removeProperty('--pt-text-justify');
+		root.removeProperty('--pt-text-indent');
+		root.removeProperty('--pt-hyphens');
+		root.removeProperty('--pt-hyphenate-limit-chars');
+		root.removeProperty('--pt-hanging-punctuation');
+		root.removeProperty('--pt-widows');
+		root.removeProperty('--pt-orphans');
 	}
 
 	async loadSettings() {
