@@ -21,26 +21,38 @@ const wallet = '\\$\u20AC\u00A3\u00A5\u20BD\u20B4\u20A3\u20A4';
 type Rule = [RegExp, string];
 
 export const typographyRules: Record<string, Rule[]> = {
-	ru: [
-		// 0::Разное
+	common: [
+		// Whitespace cleanup
 		[/  +/g, ' '],
 		[/^\s|\s$/g, ''],
-		[/--/g, E.emdash],
-		[/(\d+|[XIVCMLDZ]+)-(\d+|[XIVCMLDZ]+)/g, `$1${E.endash}$2`],
+
+		// Dashes and special chars
 		[/(?<!\d)-(\d+)/g, `${E.minus}$1`],
-		[/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'],
+		[/(\d+)-(\d+)/g, `$1${E.endash}$2`],
+		[/(\d+|[XIVCMLDZ\u2160-\u2188]+)-(\d+|[XIVCMLDZ\u2160-\u2188]+)/g, `$1${E.endash}$2`],
 		[
-			new RegExp(`([${E.minus}${E.emdash}-])(\\d+)[${E.endash}\\-](\\d+)`, 'g'),
+			new RegExp(
+				`([${E.minus}${E.emdash}-])(\\d+)[${E.minus}${E.endash}\\-]([${E.minus}${E.endash}\\-]?\\d+)`,
+				'g'
+			),
 			`$1$2${E.ellipsis}$3`,
 		],
+		[/--/g, E.emdash],
 		[/\.\.\./g, E.ellipsis],
-		[/'/g, '’'],
-		[/"([^"]*)"([^"]*)"([^"]*)"/g, `«$1„$2“$3»`],
-		[/""(.*)""]/g, `«„$1“»`],
+
+		// Apostrophe
+		[/'/g, '\u2019'],
+	],
+
+	ru: [
+		// 0::Разное
+		[/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'],
+		[/"([^"]*)"([^"]*)"([^"]*)"/g, `«$1„$2"$3»`],
+		[/""(.*)""]/g, `«„$1"»`],
 		[/"([^"]+)"/g, `«$1»`],
 		[
 			new RegExp(
-				`(?<=[${punctuation.leftSided}«„\\(\\[])\\s+|(?<!\\s)\\s(?=[${punctuation.rightSided}»“'\\)\\]])`,
+				`(?<=[${punctuation.leftSided}«„\\(\\[])\\s+|(?<!\\s)\\s(?=[${punctuation.rightSided}»"'\\)\\]])`,
 				'g'
 			),
 			'',
@@ -97,17 +109,9 @@ export const typographyRules: Record<string, Rule[]> = {
 		],
 	],
 	en: [
-		[/  +/g, ' '],
-		[/--/g, E.emdash],
-		[/(\d+)-(\d+)/g, `$1${E.endash}$2`],
-
-		[/\.\.\./g, E.ellipsis],
-		[/'/g, '’'],
-		[/"([^"]*)"([^"]*)"([^"]*)"/g, `“$1‘$2’$3”`],
-		[/""(.*)""]/g, `“‘$1’”`],
-		[/"([^"]+)"/g, `“$1”`],
-
-		[/(?<!\d)-(\d+)/g, `${E.minus}$1`],
+		[/"([^"]*)"([^"]*)"([^"]*)"/g, `\u201C$1\u2018$2\u2019$3\u201D`],
+		[/""(.*)""]/g, `\u201C\u2018$1\u2019\u201D`],
+		[/"([^"]+)"/g, `\u201C$1\u201D`],
 		[new RegExp(`([${wallet}])\\s?(\\d+)`, 'g'), `$1$2`],
 
 		[/fi/g, '\uFB01'],

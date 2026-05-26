@@ -5,6 +5,7 @@ import { t } from './i18n';
 export interface PreviewTypographySettings {
 	globalScript: string;
 	dynamicDetection: boolean;
+	customRulesCommon: string;
 	customRulesRu: string;
 	customRulesEn: string;
 	srylesEnabled: boolean;
@@ -27,6 +28,7 @@ export interface PreviewTypographySettings {
 export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	globalScript: '',
 	dynamicDetection: true,
+	customRulesCommon: '',
 	customRulesRu: '',
 	customRulesEn: '',
 	srylesEnabled: true,
@@ -91,6 +93,17 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.dynamicDetection).onChange(async (value) => {
 					this.plugin.settings.dynamicDetection = value;
+					await this.plugin.saveSettings();
+					this.refreshActiveView();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName(t('customRulesCommonTitle'))
+			.setDesc(t('customRulesDesc'))
+			.addTextArea((text) =>
+				text.setValue(this.plugin.settings.customRulesCommon).onChange(async (val) => {
+					this.plugin.settings.customRulesCommon = val;
 					await this.plugin.saveSettings();
 					this.refreshActiveView();
 				})

@@ -10,6 +10,7 @@ export type LocaleKey =
 	| 'dynamicDetectionDesc'
 	| 'commandName'
 	| 'placeholderScript'
+	| 'customRulesCommonTitle'
 	| 'customRulesCyrillicTitle'
 	| 'customRulesLatinTitle'
 	| 'customRulesDesc'
@@ -84,6 +85,7 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 			'Автоматически определяет письменность (кириллица/латиница) по тексту, если не заданы глобальные или локальные свойства заметки.',
 		commandName: 'Применить типографику к текущей заметке',
 		placeholderScript: 'По умолчанию (выключено)',
+		customRulesCommonTitle: 'Пользовательские общие правила',
 		customRulesCyrillicTitle: 'Пользовательские правила для кириллицы',
 		customRulesLatinTitle: 'Пользовательские правила для латиницы',
 		customRulesDesc: 'Формат: «регулярное выражение|замена», с новой строки.',
@@ -162,6 +164,7 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 			'Automatically detects script (Cyrillic/Latin) from text if neither global nor local note properties are set.',
 		commandName: 'Apply typography to current note',
 		placeholderScript: 'Default (disabled)',
+		customRulesCommonTitle: 'Custom common rules',
 		customRulesCyrillicTitle: 'Custom rules for Cyrillic',
 		customRulesLatinTitle: 'Custom rules for Latin',
 		customRulesDesc: 'Format: "regular expression|replacement", one per line.',

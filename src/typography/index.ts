@@ -62,11 +62,18 @@ export function applyTypographyToString(
 	const activeScript = strategy === 'dynamic' ? detectScriptDynamic(text) : strategy;
 	if (!activeScript || (activeScript !== 'ru' && activeScript !== 'en')) return text;
 
-	const standardRules = typographyRules[activeScript] || [];
-	const customRaw = activeScript === 'ru' ? settings.customRulesRu : settings.customRulesEn;
-	const customRules = parseCustomRules(customRaw);
+	const scriptCustomRaw = activeScript === 'ru' ? settings.customRulesRu : settings.customRulesEn;
+	const scriptCustomRules = parseCustomRules(scriptCustomRaw);
+	const scriptBuiltinRules = typographyRules[activeScript] || [];
+	const commonCustomRules = parseCustomRules(settings.customRulesCommon);
+	const commonBuiltinRules = typographyRules['common'] || [];
 
-	const allRules = [...customRules, ...standardRules];
+	const allRules = [
+		...scriptCustomRules,
+		...commonCustomRules,
+		...scriptBuiltinRules,
+		...commonBuiltinRules,
+	];
 
 	let result = text;
 	for (const [regex, replaceValue] of allRules) {
