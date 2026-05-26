@@ -21,4 +21,9 @@
 	text-rendering: geometricPrecision;
 	-webkit-hyphenate-character: "\2010";
 	hyphenate-character: "\2010";
+
+	& li {
+		text-indent: var(--pt-list-item-text-indent, 0);
+		padding-left: var(--pt-list-item-padding-left, 0);
+	}
 }

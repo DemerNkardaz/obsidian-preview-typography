@@ -52,6 +52,8 @@ export default class PreviewTypography extends Plugin {
 		set('--pt-widows', s.widows);
 		set('--pt-orphans', s.orphans);
 		set('--pt-line-height', s.lineHeight);
+		set('--pt-list-item-text-indent', s.textIndentListItem);
+		set('--pt-list-item-padding-left', s.textPaddingLeftListItem);
 	}
 
 	removeStyleVariables() {
@@ -70,6 +72,8 @@ export default class PreviewTypography extends Plugin {
 		root.removeProperty('--pt-widows');
 		root.removeProperty('--pt-orphans');
 		root.removeProperty('--pt-line-height');
+		root.removeProperty('--pt-list-item-text-indent');
+		root.removeProperty('--pt-list-item-padding-left');
 	}
 
 	async loadSettings() {

@@ -17,6 +17,8 @@ export interface PreviewTypographySettings {
 	textWrap: 'wrap' | 'nowrap' | 'balance' | 'pretty';
 	textJustify: 'auto' | 'none' | 'inter-word' | 'inter-character';
 	textIndent: string;
+	textIndentListItem: string;
+	textPaddingLeftListItem: string;
 	hyphens: 'none' | 'manual' | 'auto';
 	hyphenateLimitChars: string;
 	hangingPunctuation: 'none' | 'first' | 'last' | 'first last' | 'allow-end' | 'force-end';
@@ -40,6 +42,8 @@ export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	textWrap: 'pretty',
 	textJustify: 'inter-word',
 	textIndent: '5mm',
+	textIndentListItem: '0',
+	textPaddingLeftListItem: '0',
 	hyphens: 'auto',
 	hyphenateLimitChars: '5 5 3',
 	hangingPunctuation: 'first last',
@@ -303,6 +307,44 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					this.plugin.updateStyleVariables();
 				})
 			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextIndentListItemTitle'))
+			.setDesc(t('styleTextIndentListItemDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.textIndentListItem).onChange(async (val) => {
+					this.plugin.settings.textIndentListItem = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) => {
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.textIndentListItem = DEFAULT_SETTINGS.textIndentListItem;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				});
+			});
+
+		new Setting(containerEl)
+			.setName(t('styleTextPaddingLeftListItemTitle'))
+			.setDesc(t('styleTextPaddingLeftListItemDesc'))
+			.addText((text) =>
+				text.setValue(this.plugin.settings.textPaddingLeftListItem).onChange(async (val) => {
+					this.plugin.settings.textPaddingLeftListItem = val;
+					await this.plugin.saveSettings();
+					this.plugin.updateStyleVariables();
+				})
+			)
+			.addButton((btn) => {
+				btn.setButtonText(t('restoreDefault')).onClick(async () => {
+					this.plugin.settings.textPaddingLeftListItem = DEFAULT_SETTINGS.textPaddingLeftListItem;
+					await this.plugin.saveSettings();
+					this.display();
+					this.plugin.updateStyleVariables();
+				});
+			});
 
 		new Setting(containerEl)
 			.setName(t('styleHyphensTitle'))

@@ -50,6 +50,10 @@ export type LocaleKey =
 	| 'textJustifyInterChar'
 	| 'styleTextIndentTitle'
 	| 'styleTextIndentDesc'
+	| 'styleTextIndentListItemTitle'
+	| 'styleTextIndentListItemDesc'
+	| 'styleTextPaddingLeftListItemTitle'
+	| 'styleTextPaddingLeftListItemDesc'
 	| 'styleHyphensTitle'
 	| 'styleHyphensDesc'
 	| 'hyphensNone'
@@ -129,6 +133,11 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		textJustifyInterChar: 'По символам',
 		styleTextIndentTitle: 'Отступ первой строки',
 		styleTextIndentDesc: 'Укажите значение в мм, em, rem, px и т.д. или 0 для отключения.',
+		styleTextIndentListItemTitle: 'Отступ первой строки списка',
+		styleTextIndentListItemDesc: 'Укажите значение в мм, em, rem, px и т.д. или 0 для отключения.',
+		styleTextPaddingLeftListItemTitle: 'Внутренний левый отступ списка',
+		styleTextPaddingLeftListItemDesc:
+			'Укажите значение в мм, em, rem, px и т.д. или 0 для отключения. Может быть использован для создания «висячего отступа».',
 		styleHyphensTitle: 'Расстановка переносов',
 		styleHyphensDesc: 'Управляет автоматической расстановкой переносов в словах.',
 		hyphensNone: 'Без переносов',
@@ -208,6 +217,12 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		textJustifyInterChar: 'Inter-character',
 		styleTextIndentTitle: 'Text Indent',
 		styleTextIndentDesc: 'First-line indent. Accepts mm, em, rem, px, etc. Use 0 to disable.',
+		styleTextIndentListItemTitle: 'Text Indent for List Items',
+		styleTextIndentListItemDesc:
+			'Indent for list items. Accepts mm, em, rem, px, etc. Use 0 to disable.',
+		styleTextPaddingLeftListItemTitle: 'Text Left Padding for List Items',
+		styleTextPaddingLeftListItemDesc:
+			'Left padding for list items. Accepts mm, em, rem, px, etc. Use 0 to disable. May be used for make “hanging indent”.',
 		styleHyphensTitle: 'Hyphens',
 		styleHyphensDesc: 'Controls automatic hyphenation of words.',
 		hyphensNone: 'No hyphens',
