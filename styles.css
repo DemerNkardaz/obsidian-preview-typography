@@ -38,3 +38,13 @@
 	-webkit-hyphens: var(--pt-hyphens, auto);
 	hyphens: var(--pt-hyphens, auto);
 }
+
+.pt__settings-note {
+	margin-top: 0.5rem;
+	margin-bottom: 1rem;
+	padding: 1rem;
+	color: var(--text-muted);
+	font-size: 0.9rem;
+	background-color: var(--setting-items-background);
+	border-radius: 10px;
+}

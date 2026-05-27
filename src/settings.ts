@@ -365,6 +365,8 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					})
 			);
 
+		containerEl.createEl('p', { text: t('styleHyphensNote') }).classList.add('pt__settings-note');
+
 		new Setting(containerEl)
 			.setName(t('styleHyphenateLimitCharsTitle'))
 			.setDesc(t('styleHyphenateLimitCharsDesc'))

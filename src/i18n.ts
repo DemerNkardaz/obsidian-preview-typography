@@ -57,6 +57,7 @@ export type LocaleKey =
 	| 'styleTextIndentListItemDesc'
 	| 'styleTextPaddingLeftListItemTitle'
 	| 'styleTextPaddingLeftListItemDesc'
+	| 'styleHyphensNote'
 	| 'styleHyphensTitle'
 	| 'styleHyphensDesc'
 	| 'hyphensNone'
@@ -144,6 +145,8 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleTextPaddingLeftListItemTitle: 'Внутренний левый отступ списка',
 		styleTextPaddingLeftListItemDesc:
 			'Укажите значение в мм, em, rem, px и т.д. или 0 для отключения. Может быть использован для создания «висячего отступа».',
+		styleHyphensNote:
+			'Кажется, текущая сборка Electron не поддерживает расстановку переносов, по этому эти свойства могут ничего не дать. Настройка будет оставлена до лучших времён. Я не смогла заставить это работать, хотя оно работает в отдельных браузерах.',
 		styleHyphensTitle: 'Расстановка переносов',
 		styleHyphensDesc: 'Управляет автоматической расстановкой переносов в словах.',
 		hyphensNone: 'Без переносов',
@@ -232,6 +235,8 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleTextPaddingLeftListItemTitle: 'Text Left Padding for List Items',
 		styleTextPaddingLeftListItemDesc:
 			'Left padding for list items. Accepts mm, em, rem, px, etc. Use 0 to disable. May be used for make “hanging indent”.',
+		styleHyphensNote:
+			'It seems that the current Electron build does not support hyphenation. This setting will be kept until the best time. I could not get it to work, but it works in separate browsers',
 		styleHyphensTitle: 'Hyphens',
 		styleHyphensDesc: 'Controls automatic hyphenation of words.',
 		hyphensNone: 'No hyphens',
