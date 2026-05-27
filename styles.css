@@ -1,7 +1,7 @@
 /* styles.css */
-.markdown-preview-view [class^="el-"],
-.markdown-preview-view [class*=" el-"],
-.markdown-source-view .cm-content {
+.pt__body-initialtor .markdown-preview-view [class^="el-"],
+.pt__body-initialtor .markdown-preview-view [class*=" el-"],
+.pt__body-initialtor .markdown-source-view .cm-content {
 	text-align: var(--pt-text-alignment, left);
 	letter-spacing: var(--pt-text-letter-spacing, normal);
 	word-spacing: var(--pt-text-word-spacing, normal);

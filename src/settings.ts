@@ -8,7 +8,7 @@ export interface PreviewTypographySettings {
 	customRulesCommon: string;
 	customRulesRu: string;
 	customRulesEn: string;
-	srylesEnabled: boolean;
+	stylesEnabled: boolean;
 	textAlignment: 'left' | 'right' | 'justify' | 'center';
 	letterSpacing: string;
 	wordSpacing: string;
@@ -33,7 +33,7 @@ export const DEFAULT_SETTINGS: PreviewTypographySettings = {
 	customRulesCommon: '',
 	customRulesRu: '',
 	customRulesEn: '',
-	srylesEnabled: true,
+	stylesEnabled: true,
 	textAlignment: 'justify',
 	letterSpacing: '-0.007em',
 	wordSpacing: '0.05em',
@@ -141,10 +141,10 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 			.setName(t('styleEnabledTitle'))
 			.setDesc(t('styleEnabledDesc'))
 			.addToggle((toggle) =>
-				toggle.setValue(this.plugin.settings.srylesEnabled).onChange(async (value) => {
-					this.plugin.settings.srylesEnabled = value;
+				toggle.setValue(this.plugin.settings.stylesEnabled).onChange(async (value) => {
+					this.plugin.settings.stylesEnabled = value;
 					await this.plugin.saveSettings();
-					this.plugin.updateStyleVariables(!value);
+					this.plugin.updateStyleVariables();
 				})
 			);
 
@@ -161,6 +161,23 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					.onChange(async (value: string) => {
 						this.plugin.settings.textAlignment =
 							value as PreviewTypographySettings['textAlignment'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextJustifyTitle'))
+			.setDesc(t('styleTextJustifyDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('auto', t('textJustifyAuto'))
+					.addOption('none', t('textJustifyNone'))
+					.addOption('inter-word', t('textJustifyInterWord'))
+					.addOption('inter-character', t('textJustifyInterChar'))
+					.setValue(this.plugin.settings.textJustify)
+					.onChange(async (val: string) => {
+						this.plugin.settings.textJustify = val as PreviewTypographySettings['textJustify'];
 						await this.plugin.saveSettings();
 						this.plugin.updateStyleVariables();
 					})
@@ -224,75 +241,6 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName(t('styleWordBreakTitle'))
-			.setDesc(t('styleWordBreakDesc'))
-			.addDropdown((d) =>
-				d
-					.addOption('normal', t('wordBreakNormal'))
-					.addOption('auto-phrase', t('wordBreakAutoPhrase'))
-					.addOption('normal', t('wordBreakWord'))
-					.addOption('break-all', t('wordBreakAll'))
-					.addOption('keep-all', t('wordBreakKeep'))
-					.setValue(this.plugin.settings.wordBreak)
-					.onChange(async (val: string) => {
-						this.plugin.settings.wordBreak = val as PreviewTypographySettings['wordBreak'];
-						await this.plugin.saveSettings();
-						this.plugin.updateStyleVariables();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName(t('styleOverflowWrapTitle'))
-			.setDesc(t('styleOverflowWrapDesc'))
-			.addDropdown((d) =>
-				d
-					.addOption('normal', t('overflowWrapNormal'))
-					.addOption('break-word', t('overflowWrapBreakWord'))
-					.addOption('anywhere', t('overflowWrapAnywhere'))
-					.setValue(this.plugin.settings.overflowWrap)
-					.onChange(async (val: string) => {
-						this.plugin.settings.overflowWrap = val as PreviewTypographySettings['overflowWrap'];
-						await this.plugin.saveSettings();
-						this.plugin.updateStyleVariables();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName(t('styleTextWrapTitle'))
-			.setDesc(t('styleTextWrapDesc'))
-			.addDropdown((d) =>
-				d
-					.addOption('wrap', t('textWrapWrap'))
-					.addOption('nowrap', t('textWrapNowrap'))
-					.addOption('balance', t('textWrapBalance'))
-					.addOption('pretty', t('textWrapPretty'))
-					.addOption('stable', t('textWrapStable'))
-					.setValue(this.plugin.settings.textWrap)
-					.onChange(async (val: string) => {
-						this.plugin.settings.textWrap = val as PreviewTypographySettings['textWrap'];
-						await this.plugin.saveSettings();
-						this.plugin.updateStyleVariables();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName(t('styleTextJustifyTitle'))
-			.setDesc(t('styleTextJustifyDesc'))
-			.addDropdown((d) =>
-				d
-					.addOption('auto', t('textJustifyAuto'))
-					.addOption('none', t('textJustifyNone'))
-					.addOption('inter-word', t('textJustifyInterWord'))
-					.addOption('inter-character', t('textJustifyInterChar'))
-					.setValue(this.plugin.settings.textJustify)
-					.onChange(async (val: string) => {
-						this.plugin.settings.textJustify = val as PreviewTypographySettings['textJustify'];
-						await this.plugin.saveSettings();
-						this.plugin.updateStyleVariables();
-					})
-			);
-
-		new Setting(containerEl)
 			.setName(t('styleTextIndentTitle'))
 			.setDesc(t('styleTextIndentDesc'))
 			.addText((text) =>
@@ -348,6 +296,58 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					this.plugin.updateStyleVariables();
 				});
 			});
+
+		new Setting(containerEl)
+			.setName(t('styleWordBreakTitle'))
+			.setDesc(t('styleWordBreakDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('normal', t('wordBreakNormal'))
+					.addOption('auto-phrase', t('wordBreakAutoPhrase'))
+					.addOption('normal', t('wordBreakWord'))
+					.addOption('break-all', t('wordBreakAll'))
+					.addOption('keep-all', t('wordBreakKeep'))
+					.setValue(this.plugin.settings.wordBreak)
+					.onChange(async (val: string) => {
+						this.plugin.settings.wordBreak = val as PreviewTypographySettings['wordBreak'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleOverflowWrapTitle'))
+			.setDesc(t('styleOverflowWrapDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('normal', t('overflowWrapNormal'))
+					.addOption('break-word', t('overflowWrapBreakWord'))
+					.addOption('anywhere', t('overflowWrapAnywhere'))
+					.setValue(this.plugin.settings.overflowWrap)
+					.onChange(async (val: string) => {
+						this.plugin.settings.overflowWrap = val as PreviewTypographySettings['overflowWrap'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName(t('styleTextWrapTitle'))
+			.setDesc(t('styleTextWrapDesc'))
+			.addDropdown((d) =>
+				d
+					.addOption('wrap', t('textWrapWrap'))
+					.addOption('nowrap', t('textWrapNowrap'))
+					.addOption('balance', t('textWrapBalance'))
+					.addOption('pretty', t('textWrapPretty'))
+					.addOption('stable', t('textWrapStable'))
+					.setValue(this.plugin.settings.textWrap)
+					.onChange(async (val: string) => {
+						this.plugin.settings.textWrap = val as PreviewTypographySettings['textWrap'];
+						await this.plugin.saveSettings();
+						this.plugin.updateStyleVariables();
+					})
+			);
 
 		new Setting(containerEl)
 			.setName(t('styleHyphensTitle'))

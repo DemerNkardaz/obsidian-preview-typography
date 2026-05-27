@@ -49,12 +49,18 @@ export default class PreviewTypography extends Plugin {
 		}
 	}
 
-	updateStyleVariables(remove?: boolean) {
-		if (remove) {
-			this.removeStyleVariables();
+	updateStyleVariables() {
+		const s = this.settings;
+
+		if (!s.stylesEnabled) {
+			document.body.classList.remove('pt__body-initialtor');
 			return;
 		}
-		const s = this.settings;
+
+		if (s.stylesEnabled && !document.body.classList.contains('pt__body-initialtor')) {
+			document.body.classList.add('pt__body-initialtor');
+		}
+
 		const root = document.documentElement.style;
 
 		const set = (prop: string, val: string) => root.setProperty(prop, val);
@@ -75,26 +81,6 @@ export default class PreviewTypography extends Plugin {
 		set('--pt-line-height', s.lineHeight);
 		set('--pt-list-item-text-indent', s.textIndentListItem);
 		set('--pt-list-item-padding-left', s.textPaddingLeftListItem);
-	}
-
-	removeStyleVariables() {
-		const root = document.documentElement.style;
-		root.removeProperty('--pt-text-alignment');
-		root.removeProperty('--pt-text-letter-spacing');
-		root.removeProperty('--pt-text-word-spacing');
-		root.removeProperty('--pt-word-break');
-		root.removeProperty('--pt-overflow-wrap');
-		root.removeProperty('--pt-text-wrap');
-		root.removeProperty('--pt-text-justify');
-		root.removeProperty('--pt-text-indent');
-		root.removeProperty('--pt-hyphens');
-		root.removeProperty('--pt-hyphenate-limit-chars');
-		root.removeProperty('--pt-hanging-punctuation');
-		root.removeProperty('--pt-widows');
-		root.removeProperty('--pt-orphans');
-		root.removeProperty('--pt-line-height');
-		root.removeProperty('--pt-list-item-text-indent');
-		root.removeProperty('--pt-list-item-padding-left');
 	}
 
 	async loadSettings() {
