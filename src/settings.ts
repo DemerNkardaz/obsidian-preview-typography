@@ -304,7 +304,7 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 				d
 					.addOption('normal', t('wordBreakNormal'))
 					.addOption('auto-phrase', t('wordBreakAutoPhrase'))
-					.addOption('normal', t('wordBreakWord'))
+					.addOption('break-word', t('wordBreakWord'))
 					.addOption('break-all', t('wordBreakAll'))
 					.addOption('keep-all', t('wordBreakKeep'))
 					.setValue(this.plugin.settings.wordBreak)
