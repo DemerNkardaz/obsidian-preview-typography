@@ -1,4 +1,4 @@
-import { Plugin, TFile } from 'obsidian';
+import { App, Plugin, TFile } from 'obsidian';
 
 import {
 	DEFAULT_SETTINGS,
@@ -20,6 +20,7 @@ export default class PreviewTypography extends Plugin {
 
 			if (file instanceof TFile) {
 				processElementTypography(this.app, file, element, this.settings);
+				this.updateNoteProperties(this.app, file, element);
 			}
 		});
 
@@ -27,6 +28,26 @@ export default class PreviewTypography extends Plugin {
 	}
 
 	onunload() {}
+
+	updateNoteProperties(app: App, file: TFile, element: HTMLElement) {
+		const cache = app.metadataCache.getFileCache(file);
+
+		if (cache && cache.frontmatter) {
+			const frontmatter = cache.frontmatter as Record<string, unknown>;
+			let detectedLang: string | null = null;
+
+			const langVal = frontmatter['lang'] !== undefined ? frontmatter['lang'] : frontmatter['язык'];
+			if (typeof langVal === 'string') {
+				detectedLang = langVal;
+			}
+
+			if (detectedLang) {
+				element.setAttribute('lang', detectedLang);
+			} else if (!detectedLang && element.hasAttribute('lang')) {
+				element.removeAttribute('lang');
+			}
+		}
+	}
 
 	updateStyleVariables(remove?: boolean) {
 		if (remove) {

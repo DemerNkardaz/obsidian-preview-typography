@@ -29,8 +29,10 @@ export type LocaleKey =
 	| 'styleWordBreakTitle'
 	| 'styleWordBreakDesc'
 	| 'wordBreakNormal'
+	| 'wordBreakWord'
 	| 'wordBreakAll'
 	| 'wordBreakKeep'
+	| 'wordBreakAutoPhrase'
 	| 'styleOverflowWrapTitle'
 	| 'styleOverflowWrapDesc'
 	| 'overflowWrapNormal'
@@ -42,6 +44,7 @@ export type LocaleKey =
 	| 'textWrapNowrap'
 	| 'textWrapBalance'
 	| 'textWrapPretty'
+	| 'textWrapStable'
 	| 'styleTextJustifyTitle'
 	| 'styleTextJustifyDesc'
 	| 'textJustifyAuto'
@@ -112,8 +115,10 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleWordBreakTitle: 'Перенос слов',
 		styleWordBreakDesc: 'Управляет переносом строк внутри слов при переполнении контейнера.',
 		wordBreakNormal: 'Обычный',
+		wordBreakWord: 'Разрыв в словах',
 		wordBreakAll: 'Разрыв в любом месте',
 		wordBreakKeep: 'Без разрыва (CJK)',
+		wordBreakAutoPhrase: 'Автоматическое',
 		styleOverflowWrapTitle: 'Перенос длинных слов',
 		styleOverflowWrapDesc: 'Управляет переносом слов, выходящих за границу блока.',
 		overflowWrapNormal: 'Обычный',
@@ -125,6 +130,7 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		textWrapNowrap: 'Без переноса',
 		textWrapBalance: 'Равные строки',
 		textWrapPretty: 'Улучшенный',
+		textWrapStable: 'Стабильный',
 		styleTextJustifyTitle: 'Алгоритм выравнивания',
 		styleTextJustifyDesc: 'Способ распределения пробелов при выключке по ширине.',
 		textJustifyAuto: 'Авто',
@@ -196,7 +202,9 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		styleWordBreakDesc:
 			'Controls line-breaking behaviour inside words when they overflow the container.',
 		wordBreakNormal: 'Normal',
-		wordBreakAll: 'Break at any character',
+		wordBreakWord: 'Break Word',
+		wordBreakAll: 'Break All',
+		wordBreakAutoPhrase: 'Auto phrase',
 		wordBreakKeep: 'No break (CJK)',
 		styleOverflowWrapTitle: 'Overflow Wrap',
 		styleOverflowWrapDesc: 'Controls line-breaking of words that overflow their container.',
@@ -209,6 +217,7 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		textWrapNowrap: 'No wrapping',
 		textWrapBalance: 'Balanced lines',
 		textWrapPretty: 'Improved',
+		textWrapStable: 'Stable',
 		styleTextJustifyTitle: 'Text Justify',
 		styleTextJustifyDesc: 'Justification algorithm used when text alignment is set to justify.',
 		textJustifyAuto: 'Auto',

@@ -12,9 +12,9 @@ export interface PreviewTypographySettings {
 	textAlignment: 'left' | 'right' | 'justify' | 'center';
 	letterSpacing: string;
 	wordSpacing: string;
-	wordBreak: 'normal' | 'break-all' | 'keep-all';
+	wordBreak: 'normal' | 'break-all' | 'keep-all' | 'break-word' | 'auto-phrase';
 	overflowWrap: 'normal' | 'break-word' | 'anywhere';
-	textWrap: 'wrap' | 'nowrap' | 'balance' | 'pretty';
+	textWrap: 'wrap' | 'nowrap' | 'balance' | 'pretty' | 'stable';
 	textJustify: 'auto' | 'none' | 'inter-word' | 'inter-character';
 	textIndent: string;
 	textIndentListItem: string;
@@ -229,6 +229,8 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 			.addDropdown((d) =>
 				d
 					.addOption('normal', t('wordBreakNormal'))
+					.addOption('auto-phrase', t('wordBreakAutoPhrase'))
+					.addOption('normal', t('wordBreakWord'))
 					.addOption('break-all', t('wordBreakAll'))
 					.addOption('keep-all', t('wordBreakKeep'))
 					.setValue(this.plugin.settings.wordBreak)
@@ -264,6 +266,7 @@ export class PreviewTypographySettingTab extends PluginSettingTab {
 					.addOption('nowrap', t('textWrapNowrap'))
 					.addOption('balance', t('textWrapBalance'))
 					.addOption('pretty', t('textWrapPretty'))
+					.addOption('stable', t('textWrapStable'))
 					.setValue(this.plugin.settings.textWrap)
 					.onChange(async (val: string) => {
 						this.plugin.settings.textWrap = val as PreviewTypographySettings['textWrap'];

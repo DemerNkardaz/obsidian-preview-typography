@@ -10,14 +10,13 @@
 	text-wrap: var(--pt-text-wrap, wrap);
 	text-justify: var(--pt-text-justify, auto);
 	text-indent: var(--pt-text-indent, 0);
-	-webkit-hyphens: var(--pt-webkit-hyphens, manual);
-	hyphens: var(--pt-hyphens, manual);
+	-webkit-hyphens: var(--pt-hyphens, auto);
+	hyphens: var(--pt-hyphens, auto);
 	hyphenate-limit-chars: var(--pt-hyphenate-limit-chars, auto);
 	hanging-punctuation: var(--pt-hanging-punctuation, none);
 	widows: var(--pt-widows, 2);
 	orphans: var(--pt-orphans, 2);
 
-	/* Static values */
 	text-rendering: geometricPrecision;
 	-webkit-hyphenate-character: "\2010";
 	hyphenate-character: "\2010";
@@ -26,4 +25,16 @@
 		text-indent: var(--pt-list-item-text-indent, 0);
 		padding-left: var(--pt-list-item-padding-left, 0);
 	}
+}
+
+.markdown-preview-view p,
+.markdown-preview-view ul,
+.markdown-preview-view ol,
+.markdown-source-view .cm-content p,
+.markdown-source-view .cm-content ul,
+.markdown-source-view .cm-content ol {
+	word-break: var(--pt-word-break, normal);
+	overflow-wrap: var(--pt-overflow-wrap, normal);
+	-webkit-hyphens: var(--pt-hyphens, auto);
+	hyphens: var(--pt-hyphens, auto);
 }
