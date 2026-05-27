@@ -1,5 +1,6 @@
 /* styles.css */
-.markdown-preview-view,
+.markdown-preview-view [class^="el-"],
+.markdown-preview-view [class*=" el-"],
 .markdown-source-view .cm-content {
 	text-align: var(--pt-text-alignment, left);
 	letter-spacing: var(--pt-text-letter-spacing, normal);
@@ -21,7 +22,12 @@
 	-webkit-hyphenate-character: "\2010";
 	hyphenate-character: "\2010";
 
-	& li {
+	& .callout li {
+		text-indent: 0;
+		padding-left: 0;
+	}
+
+	& li:not(.callout li) {
 		text-indent: var(--pt-list-item-text-indent, 0);
 		padding-left: var(--pt-list-item-padding-left, 0);
 	}
