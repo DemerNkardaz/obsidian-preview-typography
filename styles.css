@@ -25,18 +25,17 @@
 		text-indent: var(--pt-list-item-text-indent, 0);
 		padding-left: var(--pt-list-item-padding-left, 0);
 	}
-}
 
-.markdown-preview-view p,
-.markdown-preview-view ul,
-.markdown-preview-view ol,
-.markdown-source-view .cm-content p,
-.markdown-source-view .cm-content ul,
-.markdown-source-view .cm-content ol {
-	word-break: var(--pt-word-break, normal);
-	overflow-wrap: var(--pt-overflow-wrap, normal);
-	-webkit-hyphens: var(--pt-hyphens, auto);
-	hyphens: var(--pt-hyphens, auto);
+	& li,
+	& p,
+	& ul,
+	& ol {
+		text-align: var(--pt-text-alignment, left);
+		word-break: var(--pt-word-break, normal);
+		overflow-wrap: var(--pt-overflow-wrap, normal);
+		-webkit-hyphens: var(--pt-hyphens, auto);
+		hyphens: var(--pt-hyphens, auto);
+	}
 }
 
 .pt__settings-note {
