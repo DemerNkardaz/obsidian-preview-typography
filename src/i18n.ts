@@ -185,7 +185,7 @@ const locales: Record<'ru' | 'en', Record<LocaleKey, string>> = {
 		customRulesCommonTitle: 'Custom common rules',
 		customRulesCyrillicTitle: 'Custom rules for Cyrillic',
 		customRulesLatinTitle: 'Custom rules for Latin',
-		customRulesDesc: 'Format: "regular expression|replacement", one per line.',
+		customRulesDesc: 'Format: “regular expression|replacement”, one per line.',
 		styleEnabledTitle: 'Enable styles',
 		styleEnabledDesc:
 			'Affects the display of note content. Several features may not work on older Chromium versions.',

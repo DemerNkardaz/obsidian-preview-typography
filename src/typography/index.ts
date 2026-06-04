@@ -1,10 +1,40 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { App, TFile } from 'obsidian';
 import { PreviewTypographySettings } from '../settings';
 import { typographyRules } from './typographyRules';
+import type { Rule, FunctionRule, RegExpTransformRule, RegExpReplaceRule } from './typographyRules';
 
 export type ScriptType = 'ru' | 'en' | null;
 
-export function parseCustomRules(raw: string): [RegExp, string][] {
+// ─── Protection of special patterns (URLs, emails, file paths) ───────────────
+
+const PROTECTION_MARKER = '\uE001\uEDF1\uF111';
+
+const PROTECTED_PATTERNS = [
+	/[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+/g, // E-mail
+	/https?:\/\/[^\s]+/g, // URL
+	/\/[a-zA-Z0-9._\-/]+\.[a-zA-Z0-9]+/g, // File paths
+];
+
+function protectPatterns(text: string): { text: string; matches: string[] } {
+	const matches: string[] = [];
+	let result = text;
+	for (const regex of PROTECTED_PATTERNS) {
+		result = result.replace(regex, (match) => {
+			matches.push(match);
+			return PROTECTION_MARKER;
+		});
+	}
+	return { text: result, matches };
+}
+
+function restorePatterns(text: string, matches: string[]): string {
+	return text.replace(new RegExp(PROTECTION_MARKER, 'g'), () => matches.shift() || '');
+}
+
+// ─── Custom rules parsing (unchanged) ────────────────────────────────────────
+
+export function parseCustomRules(raw: string): Rule[] {
 	if (!raw) return [];
 	return raw
 		.split('\n')
@@ -19,14 +49,20 @@ export function parseCustomRules(raw: string): [RegExp, string][] {
 			}
 
 			try {
-				return [new RegExp(regexStr, 'gu'), replacement];
+				return {
+					kind: 'replace' as const,
+					rule: new RegExp(regexStr, 'gu'),
+					replacement,
+				} satisfies RegExpReplaceRule;
 			} catch {
 				console.error('Invalid regex in custom rules:', regexStr);
 				return null;
 			}
 		})
-		.filter((r): r is [RegExp, string] => r !== null);
+		.filter((r): r is RegExpReplaceRule => r !== null);
 }
+
+// ─── Script detection ─────────────────────────────────────────────────────────
 
 export function normalizeScript(value: unknown): ScriptType {
 	if (!value) return null;
@@ -52,6 +88,28 @@ export function detectScriptDynamic(text: string): ScriptType {
 	return null;
 }
 
+// ─── Rule application ─────────────────────────────────────────────────────────
+
+function applyRule(text: string, rule: Rule): string {
+	switch (rule.kind) {
+		case 'function': {
+			const r = rule as FunctionRule;
+			return r.rule(text, ...(r.args ?? []));
+		}
+		case 'transform': {
+			const r = rule as RegExpTransformRule;
+			return text.replace(r.rule, (match: string, ...groups: unknown[]) => {
+				const regexArray = [match, ...groups] as unknown as RegExpExecArray;
+				return r.transform(regexArray);
+			});
+		}
+		case 'replace': {
+			const r = rule as RegExpReplaceRule;
+			return text.replace(r.rule, r.replacement);
+		}
+	}
+}
+
 export function applyTypographyToString(
 	text: string,
 	strategy: ScriptType | 'dynamic',
@@ -64,29 +122,29 @@ export function applyTypographyToString(
 
 	const scriptCustomRaw = activeScript === 'ru' ? settings.customRulesRu : settings.customRulesEn;
 	const scriptCustomRules = parseCustomRules(scriptCustomRaw);
-	const scriptBuiltinRules = typographyRules[activeScript] || [];
+	const scriptBuiltinRules = typographyRules[activeScript] ?? [];
 	const commonCustomRules = parseCustomRules(settings.customRulesCommon);
-	const commonBuiltinRules = typographyRules['common'] || [];
+	const commonBuiltinRules = typographyRules['common'] ?? [];
 
-	const allRules = [
+	// Custom rules have no weight → default 0, so they run before built-in rules of the same weight
+	const allRules: Rule[] = [
 		...scriptCustomRules,
 		...commonCustomRules,
 		...scriptBuiltinRules,
 		...commonBuiltinRules,
-	];
+	].sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0));
 
-	let result = text;
+	const { text: protected_, matches } = protectPatterns(text);
+
+	let result = protected_;
 	for (const rule of allRules) {
-		const [first, second] = rule;
-
-		if (typeof first === 'function') {
-			result = first(result);
-		} else {
-			result = result.replace(first, second);
-		}
+		result = applyRule(result, rule);
 	}
-	return result;
+
+	return restorePatterns(result, matches);
 }
+
+// ─── DOM traversal (unchanged logic, updated call-site) ──────────────────────
 
 function processElementWithSmartContext(
 	element: HTMLElement,
@@ -121,7 +179,7 @@ function processElementWithSmartContext(
 	if (nodes.length === 0) return;
 
 	const NODE_MARKER = '\uE000';
-	const combinedText = nodes.map((n) => (n ? n.nodeValue || '' : '')).join(NODE_MARKER);
+	const combinedText = nodes.map((n) => n?.nodeValue ?? '').join(NODE_MARKER);
 
 	const transformedCombinedText = applyTypographyToString(combinedText, strategy, settings);
 
@@ -146,7 +204,7 @@ export function processElementTypography(
 	const cache = app.metadataCache.getFileCache(file);
 	let localScript: ScriptType = null;
 
-	if (cache && cache.frontmatter) {
+	if (cache?.frontmatter) {
 		const frontmatter = cache.frontmatter as Record<string, unknown>;
 		const scriptVal =
 			frontmatter['script'] !== undefined ? frontmatter['script'] : frontmatter['письмо'];
